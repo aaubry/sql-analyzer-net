@@ -52,7 +52,7 @@ namespace SqlAnalyzer.Net
 
             var dapperClass = context.SemanticModel.GetDapperSqlMapperSymbol();
             const string QueryPrefix = "QueryMultiple";
-            if (methodSymbol.ContainingType != dapperClass || !methodSymbol.Name.StartsWith(QueryPrefix))
+            if (!SymbolEqualityComparer.Default.Equals(methodSymbol.ContainingType, dapperClass) || !methodSymbol.Name.StartsWith(QueryPrefix))
             {
                 return;
             }

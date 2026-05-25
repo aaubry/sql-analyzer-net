@@ -9,7 +9,7 @@ namespace SqlAnalyzer.Net.Extensions
     {
         public static bool IsDapperDynamicParameter(this ILocalSymbol symbol, SemanticModel semanticModel)
         {
-            return symbol.Type.Equals(semanticModel.GetDapperDynamicParametersSymbol());
+            return SymbolEqualityComparer.Default.Equals(symbol.Type, semanticModel.GetDapperDynamicParametersSymbol());
         }
 
         public static SyntaxNode GetVariableScope(this ILocalSymbol symbol)

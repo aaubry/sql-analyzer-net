@@ -72,7 +72,7 @@ namespace SqlAnalyzer.Net
 
                 foreach (var property in symbolInfo.Parameters)
                 {
-                    if (property.Type.Equals(stringType))
+                    if (SymbolEqualityComparer.Default.Equals(property.Type, stringType))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Rule, argument.GetLocation(), property.Name));
                     }

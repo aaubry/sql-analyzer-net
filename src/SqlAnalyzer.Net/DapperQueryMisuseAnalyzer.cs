@@ -81,7 +81,7 @@ namespace SqlAnalyzer.Net
             var linqExtensionMethodSymbol = context.SemanticModel.GetSymbolInfo(firstInvocationExpression)
                                                 .Symbol as IMethodSymbol;
             var linqEnumerableSymbol = context.SemanticModel.GetLinqEnumerableSymbol();
-            if (linqExtensionMethodSymbol == null || linqExtensionMethodSymbol.ContainingType != linqEnumerableSymbol)
+            if (linqExtensionMethodSymbol == null || !SymbolEqualityComparer.Default.Equals(linqExtensionMethodSymbol.ContainingType, linqEnumerableSymbol))
             {
                 return;
             }

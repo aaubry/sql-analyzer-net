@@ -52,7 +52,7 @@ namespace SqlAnalyzer.Net.Extensions
             }
 
             var sqlCommand = semanticModel.Compilation.GetTypeByMetadataName("System.Data.SqlClient.SqlCommand");
-            if (methodSymbol.ContainingType == sqlCommand && (methodSymbol.Name.StartsWith("Execute") || methodSymbol.Name.StartsWith("BeginExecute")))
+            if (SymbolEqualityComparer.Default.Equals(methodSymbol.ContainingType, sqlCommand) && (methodSymbol.Name.StartsWith("Execute") || methodSymbol.Name.StartsWith("BeginExecute")))
             {
                 return true;
             }
@@ -76,7 +76,7 @@ namespace SqlAnalyzer.Net.Extensions
             var type = semanticModel.Compilation.GetTypeByMetadataName("System.Data.Entity.DbContext");
             while (type != null)
             {
-                if (methodSymbol.ContainingType == type)
+                if (SymbolEqualityComparer.Default.Equals(methodSymbol.ContainingType, type))
                 {
                     return true;
                 }
