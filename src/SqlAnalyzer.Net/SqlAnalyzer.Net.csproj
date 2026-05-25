@@ -7,17 +7,17 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>SqlAnalyzer.Net</PackageId>
-    <Authors>Oleg Shevchenko</Authors>
+    <PackageId>SqlAnalyzer.Net.Improved</PackageId>
+    <Authors>Oleg Shevchenko, Antoine Aubry</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>A Roslyn-based analyzer for SQL related stuff in .NET</Description>
-    <PackageReleaseNotes>https://github.com/olsh/sql-analyzer-net/releases</PackageReleaseNotes>
+    <Description>A Roslyn-based analyzer for SQL related stuff in .NET. This is a fork of SqlAnalyzer.Net that adds some Dapper improvements.</Description>
+    <PackageReleaseNotes>https://github.com/aaubry/sql-analyzer-net/releases</PackageReleaseNotes>
     <PackageTags>analyzers, sql, dapper</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <Version>1.2.1</Version>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/olsh/sql-analyzer-net</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/olsh/sql-analyzer-net/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/aaubry/sql-analyzer-net</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/aaubry/sql-analyzer-net/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
