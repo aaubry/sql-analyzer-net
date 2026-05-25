@@ -1,8 +1,10 @@
-﻿using System.Linq;
-using System.Threading;
-
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading;
 
 namespace SqlAnalyzer.Net.Extensions
 {
@@ -24,18 +26,17 @@ namespace SqlAnalyzer.Net.Extensions
             bool allowParams = false,
             CancellationToken cancellationToken = default)
         {
-            if (!(argument.Parent is BaseArgumentListSyntax argumentList))
+            if (argument.Parent is not BaseArgumentListSyntax argumentList)
             {
                 return null;
             }
 
-            if (!(argumentList.Parent is ExpressionSyntax invocableExpression))
+            if (argumentList.Parent is not ExpressionSyntax invocableExpression)
             {
                 return null;
             }
 
-            var symbol = semanticModel.GetSymbolInfo(invocableExpression, cancellationToken).Symbol as IMethodSymbol;
-            if (symbol == null)
+            if (semanticModel.GetSymbolInfo(invocableExpression, cancellationToken).Symbol is not IMethodSymbol symbol)
             {
                 return null;
             }
@@ -85,18 +86,62 @@ namespace SqlAnalyzer.Net.Extensions
 
         public static string TryGetArgumentStringValue(this ExpressionSyntax expression, SemanticModel semanticModel)
         {
-            if (expression is LiteralExpressionSyntax literalExpressionSyntax)
+            var visitor = new ExpressionStringValueVisitor(semanticModel, new StringBuilder());
+            expression.Accept(visitor);
+            return visitor.Value.Length > 0
+                ? visitor.Value.ToString()
+                : null;
+        }
+
+        private sealed class ExpressionStringValueVisitor(SemanticModel semanticModel, StringBuilder value) : CSharpSyntaxVisitor
+        {
+            public StringBuilder Value { get; } = value;
+
+            public override void VisitLiteralExpression(LiteralExpressionSyntax node)
             {
-                return literalExpressionSyntax.Token.Text;
+                switch (node.Token.Kind())
+                {
+                    case SyntaxKind.StringLiteralToken:
+                    case SyntaxKind.MultiLineRawStringLiteralToken:
+                    case SyntaxKind.SingleLineRawStringLiteralToken:
+                    case SyntaxKind.Utf8StringLiteralExpression:
+                    case SyntaxKind.Utf8MultiLineRawStringLiteralToken:
+                    case SyntaxKind.Utf8SingleLineRawStringLiteralToken:
+                        Value.Append(node.Token.ValueText);
+                        break;
+
+                    default:
+                        // Insert some whitespace to avoid concatenating unrelated literals
+                        Value.Append(' ');
+                        break;
+                }
             }
 
-            var symbolVariable = semanticModel.GetConstantValue(expression);
-            if (symbolVariable.HasValue)
+            public override void VisitInterpolatedStringText(InterpolatedStringTextSyntax node)
             {
-                return symbolVariable.Value?.ToString() ?? string.Empty;
+                Value.Append(node.TextToken.Text);
             }
 
-            return null;
+            public override void DefaultVisit(SyntaxNode node)
+            {
+                if (node is ExpressionSyntax expression)
+                {
+                    var symbolVariable = semanticModel.GetConstantValue(expression);
+                    if (symbolVariable.HasValue)
+                    {
+                        Value.Append(symbolVariable.Value?.ToString() ?? string.Empty);
+                        return;
+                    }
+                }
+
+                foreach (var child in node.ChildNodes())
+                {
+                    if (child is CSharpSyntaxNode syntaxNode)
+                    {
+                        syntaxNode.Accept(this);
+                    }
+                }
+            }
         }
     }
 }
