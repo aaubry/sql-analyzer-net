@@ -43,6 +43,21 @@ namespace SqlAnalyzer.Net.Extensions
             return true;
         }
 
+        public static bool IsDapperCommandDefinitionInstantiation(this ObjectCreationExpressionSyntax objectCreationExpressionSyntax, SemanticModel semanticModel)
+        {
+            var typeSymbol = semanticModel.GetSymbolInfo(objectCreationExpressionSyntax).Symbol as IMethodSymbol;
+            if (typeSymbol == null)
+            {
+                return false;
+            }
+            var commandDefinitionType = semanticModel.Compilation.GetTypeByMetadataName("Dapper.CommandDefinition");
+            if (SymbolEqualityComparer.Default.Equals(typeSymbol.ContainingType, commandDefinitionType))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public static bool IsSqlCommandExecuteMethod(this InvocationExpressionSyntax invocationExpressionSyntax, SemanticModel semanticModel)
         {
             var methodSymbol = semanticModel.GetSymbolInfo(invocationExpressionSyntax).Symbol as IMethodSymbol;

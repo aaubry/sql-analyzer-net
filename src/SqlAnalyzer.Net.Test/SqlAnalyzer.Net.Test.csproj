@@ -10,6 +10,7 @@
     <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlDynamicParametersWithConstructor.cs" />
     <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlLiteralParameters.cs" />
     <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlUnmatchedParameters.cs" />
+    <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlUnmatchedParametersInCommandDefinition.cs" />
     <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlUnmatchedSqlVariable.cs" />
     <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlWithConstUnmatchedParameters.cs" />
     <Compile Remove="TestData\DapperQueryMisuseAnalyzer\QueryMultipleWithFirstOrDefault.cs" />
@@ -43,6 +44,7 @@
     <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlDynamicParametersWithConstructor.cs" />
     <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlDynamicParameters.cs" />
     <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlDeclaredVariableParameters.cs" />
+    <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlUnmatchedParametersInCommandDefinition.cs" />
     <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlUnmatchedSqlVariable.cs" />
     <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlWithConstUnmatchedParameters.cs" />
     <EmbeddedResource Include="TestData\DapperQueryMisuseAnalyzer\QueryMultipleWithFirstOrDefault.cs" />

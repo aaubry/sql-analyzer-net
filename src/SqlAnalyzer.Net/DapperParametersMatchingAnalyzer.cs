@@ -25,6 +25,7 @@ namespace SqlAnalyzer.Net
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
             context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(AnalyzeInvocationExpression, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(AnalyzeObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
         }
 
         private static ICollection<string> FindParameters(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
@@ -72,19 +73,34 @@ namespace SqlAnalyzer.Net
                 return;
             }
 
-            ReportDiagnostics(context, invocationExpressionSyntax);
+            ReportDiagnostics(context, invocationExpressionSyntax.GetLocation(), invocationExpressionSyntax.ArgumentList, "sql", "param");
+        }
+
+        private void AnalyzeObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var objectCreationExpressionSyntax = (ObjectCreationExpressionSyntax)context.Node;
+
+            if (!objectCreationExpressionSyntax.IsDapperCommandDefinitionInstantiation(context.SemanticModel))
+            {
+                return;
+            }
+
+            ReportDiagnostics(context, objectCreationExpressionSyntax.GetLocation(), objectCreationExpressionSyntax.ArgumentList, "commandText", "parameters");
         }
 
         private void ReportDiagnostics(
             SyntaxNodeAnalysisContext context,
-            InvocationExpressionSyntax invocationExpressionSyntax)
+            Location location,
+            ArgumentListSyntax argumentList,
+            string sqlParameterName,
+            string paramsParameterName)
         {
             string sqlText = null;
             ICollection<string> sharpParameters = null;
-            foreach (var argument in invocationExpressionSyntax.ArgumentList.Arguments)
+            foreach (var argument in argumentList.Arguments)
             {
                 var parameter = argument.DetermineParameter(context.SemanticModel);
-                if (string.Equals(parameter.Name, "sql"))
+                if (string.Equals(parameter.Name, sqlParameterName))
                 {
                     var sourceText = argument.TryGetArgumentStringValue(context.SemanticModel);
 
@@ -99,13 +115,13 @@ namespace SqlAnalyzer.Net
                     continue;
                 }
 
-                if (string.Equals(parameter.Name, "param"))
+                if (string.Equals(parameter.Name, paramsParameterName))
                 {
                     sharpParameters = FindParameters(context, argument);
                 }
             }
 
-            ParametersMatchingRule.TryReportDiagnostics(sqlText, sharpParameters, invocationExpressionSyntax.GetLocation(), context, Orm.Dapper);
+            ParametersMatchingRule.TryReportDiagnostics(sqlText, sharpParameters, location, context, Orm.Dapper);
         }
     }
 }
