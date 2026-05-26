@@ -58,11 +58,7 @@ namespace SqlAnalyzer.Net.Rules
             }
 
             const char SqlVariableDeclarationSymbol = '@';
-            var sqlVariables = SqlParser.FindParameters(sqlText).ToList();
-            if (orm == Orm.Dapper)
-            {
-                sqlVariables.AddRange(SqlParser.FindDapperLiterals(sqlText));
-            }
+            var sqlVariables = SqlParser.FindParameters(sqlText!, orm).ToList();
 
             sharpParameters = sharpParameters.Select(p => p.Trim(SqlVariableDeclarationSymbol)).ToList();
 
