@@ -37,6 +37,14 @@ namespace SqlAnalyzer.Net.Test
         }
 
         [TestMethod]
+        public void InlineInlineSqlParametersInTemplateStringWithComments_NotTriggered()
+        {
+            var code = ReadTestData("InlineSqlParametersInTemplateStringWithComments.cs");
+
+            VerifyCSharpDiagnostic(code);
+        }
+
+        [TestMethod]
         public void InlineSqlUnmatchedParameters_AnalyzerTriggered()
         {
             var code = ReadTestData("InlineSqlUnmatchedParameters.cs");

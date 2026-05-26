@@ -119,7 +119,37 @@ namespace SqlAnalyzer.Net.Extensions
 
             public override void VisitInterpolatedStringText(InterpolatedStringTextSyntax node)
             {
-                Value.Append(node.TextToken.Text);
+                Value.Append(node.TextToken.ValueText);
+            }
+
+            private static readonly Regex SqlCommentPattern = new(@"^/\*\s*SQL:\s*(?<sql>.*?)\*/$", RegexOptions.Compiled | RegexOptions.Singleline);
+
+            public override void VisitInterpolation(InterpolationSyntax node)
+            {
+                foreach (var child in node.ChildNodes())
+                {
+                    if (child is CSharpSyntaxNode syntaxNode)
+                    {
+                        syntaxNode.Accept(this);
+
+                        if (child.HasTrailingTrivia)
+                        {
+                            var comments = child.GetTrailingTrivia().Where(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia));
+                            foreach (var comment in comments)
+                            {
+                                var commentText = comment.ToString();
+
+                                var match = SqlCommentPattern.Match(commentText);
+                                if (match.Success)
+                                {
+                                    Value.Append(' ');
+                                    Value.Append(match.Groups["sql"].Value);
+                                    Value.Append(' ');
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             public override void DefaultVisit(SyntaxNode node)
