@@ -21,6 +21,11 @@ namespace SqlAnalyzer.Net.Extensions
             foreach (var argument in invocationExpressionSyntax.ArgumentList.Arguments)
             {
                 var parameter = argument.DetermineParameter(semanticModel);
+                if (parameter is null)
+                {
+                    continue;
+                }
+
                 if (!string.Equals(parameter.Name, "commandType"))
                 {
                     continue;

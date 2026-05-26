@@ -41,8 +41,8 @@ namespace SqlAnalyzer.Net.Rules
         private const string Title = "SQL parameters mismatch";
 
         public static void TryReportDiagnostics(
-            string sqlText,
-            ICollection<string> sharpParameters,
+            string? sqlText,
+            ICollection<string>? sharpParameters,
             Location location,
             SyntaxNodeAnalysisContext context,
             Orm orm)

@@ -61,6 +61,11 @@ namespace SqlAnalyzer.Net
             foreach (var argument in invocationExpressionSyntax.ArgumentList.Arguments)
             {
                 var parameter = argument.DetermineParameter(context.SemanticModel);
+                if (parameter is null)
+                {
+                    continue;
+                }
+
                 if (!string.Equals(parameter.Name, "param"))
                 {
                     continue;

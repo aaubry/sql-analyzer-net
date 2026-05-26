@@ -52,7 +52,9 @@ namespace SqlAnalyzer.Net.Walkers
                 SqlParameters.AddRange(objectCreationExpressionSyntax
                     .DescendantNodes()
                     .OfType<AnonymousObjectMemberDeclaratorSyntax>()
-                    .Select(n => n.NameEquals.Name.Identifier.ValueText));
+                    .Select(n => n.NameEquals)
+                    .Where(n => n != null)
+                    .Select(n => n!.Name.Identifier.ValueText));
 
                 return;
             }

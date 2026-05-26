@@ -2,8 +2,8 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace SqlAnalyzer.Net.Extensions
@@ -20,7 +20,7 @@ namespace SqlAnalyzer.Net.Extensions
         /// <param name="allowParams">if set to <c>true</c> [allow parameters].</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The parameter symbol.</returns>
-        public static IParameterSymbol DetermineParameter(
+        public static IParameterSymbol? DetermineParameter(
             this ArgumentSyntax argument,
             SemanticModel semanticModel,
             bool allowParams = false,
@@ -79,12 +79,12 @@ namespace SqlAnalyzer.Net.Extensions
             return null;
         }
 
-        public static string TryGetArgumentStringValue(this ArgumentSyntax argument, SemanticModel semanticModel)
+        public static string? TryGetArgumentStringValue(this ArgumentSyntax argument, SemanticModel semanticModel)
         {
             return argument.Expression.TryGetArgumentStringValue(semanticModel);
         }
 
-        public static string TryGetArgumentStringValue(this ExpressionSyntax expression, SemanticModel semanticModel)
+        public static string? TryGetArgumentStringValue(this ExpressionSyntax expression, SemanticModel semanticModel)
         {
             var visitor = new ExpressionStringValueVisitor(semanticModel, new StringBuilder());
             expression.Accept(visitor);

@@ -79,7 +79,7 @@ namespace SqlAnalyzer.Net
                 .AncestorsAndSelf()
                 .OfType<MethodDeclarationSyntax>()
                 .FirstOrDefault();
-            if (methodDeclaration == null)
+            if (methodDeclaration == null || multiVariable is null)
             {
                 return;
             }

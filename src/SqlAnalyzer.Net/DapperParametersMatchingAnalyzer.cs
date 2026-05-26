@@ -28,7 +28,7 @@ namespace SqlAnalyzer.Net
             context.RegisterSyntaxNodeAction(AnalyzeObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
         }
 
-        private static ICollection<string> FindParameters(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
+        private static ICollection<string>? FindParameters(SyntaxNodeAnalysisContext context, ArgumentSyntax argument)
         {
             var symbol = context.SemanticModel.GetSymbolInfo(argument.Expression).Symbol;
             if (symbol == null)
@@ -85,7 +85,10 @@ namespace SqlAnalyzer.Net
                 return;
             }
 
-            ReportDiagnostics(context, objectCreationExpressionSyntax.GetLocation(), objectCreationExpressionSyntax.ArgumentList, "commandText", "parameters");
+            if (objectCreationExpressionSyntax.ArgumentList is not null)
+            {
+                ReportDiagnostics(context, objectCreationExpressionSyntax.GetLocation(), objectCreationExpressionSyntax.ArgumentList, "commandText", "parameters");
+            }
         }
 
         private void ReportDiagnostics(
@@ -95,11 +98,16 @@ namespace SqlAnalyzer.Net
             string sqlParameterName,
             string paramsParameterName)
         {
-            string sqlText = null;
-            ICollection<string> sharpParameters = null;
+            string? sqlText = null;
+            ICollection<string>? sharpParameters = null;
             foreach (var argument in argumentList.Arguments)
             {
                 var parameter = argument.DetermineParameter(context.SemanticModel);
+                if (parameter is null)
+                {
+                    continue;
+                }
+
                 if (string.Equals(parameter.Name, sqlParameterName))
                 {
                     var sourceText = argument.TryGetArgumentStringValue(context.SemanticModel);
