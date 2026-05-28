@@ -36,6 +36,8 @@ namespace SqlAnalyzer.Net
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
             context.RegisterSyntaxNodeAction(AnalyzeInvocationExpression, SyntaxKind.InvocationExpression);
         }
 
@@ -59,6 +61,11 @@ namespace SqlAnalyzer.Net
             foreach (var argument in invocationExpressionSyntax.ArgumentList.Arguments)
             {
                 var parameter = argument.DetermineParameter(context.SemanticModel);
+                if (parameter is null)
+                {
+                    continue;
+                }
+
                 if (!string.Equals(parameter.Name, "param"))
                 {
                     continue;
@@ -72,7 +79,7 @@ namespace SqlAnalyzer.Net
 
                 foreach (var property in symbolInfo.Parameters)
                 {
-                    if (property.Type.Equals(stringType))
+                    if (SymbolEqualityComparer.Default.Equals(property.Type, stringType))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Rule, argument.GetLocation(), property.Name));
                     }

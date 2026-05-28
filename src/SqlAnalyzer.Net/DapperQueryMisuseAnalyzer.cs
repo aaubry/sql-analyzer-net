@@ -43,6 +43,8 @@ namespace SqlAnalyzer.Net
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
             context.RegisterSyntaxNodeAction(AnalyzeInvocationExpression, SyntaxKind.InvocationExpression);
         }
 
@@ -81,7 +83,7 @@ namespace SqlAnalyzer.Net
             var linqExtensionMethodSymbol = context.SemanticModel.GetSymbolInfo(firstInvocationExpression)
                                                 .Symbol as IMethodSymbol;
             var linqEnumerableSymbol = context.SemanticModel.GetLinqEnumerableSymbol();
-            if (linqExtensionMethodSymbol == null || linqExtensionMethodSymbol.ContainingType != linqEnumerableSymbol)
+            if (linqExtensionMethodSymbol == null || !SymbolEqualityComparer.Default.Equals(linqExtensionMethodSymbol.ContainingType, linqEnumerableSymbol))
             {
                 return;
             }

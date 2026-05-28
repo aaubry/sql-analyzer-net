@@ -29,7 +29,7 @@ namespace SqlAnalyzer.Net.Walkers
 
         public List<string> SqlParameters { get; } = new List<string>();
 
-        public string SqlText { get; private set; }
+        public string? SqlText { get; private set; }
 
         public override void VisitAssignmentExpression(AssignmentExpressionSyntax node)
         {

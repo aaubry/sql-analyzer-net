@@ -38,6 +38,8 @@ namespace SqlAnalyzer.Net
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
             context.RegisterSyntaxNodeAction(AnalyzeInvocationExpression, SyntaxKind.InvocationExpression);
         }
 
@@ -52,7 +54,7 @@ namespace SqlAnalyzer.Net
 
             var dapperClass = context.SemanticModel.GetDapperSqlMapperSymbol();
             const string QueryPrefix = "QueryMultiple";
-            if (methodSymbol.ContainingType != dapperClass || !methodSymbol.Name.StartsWith(QueryPrefix))
+            if (!SymbolEqualityComparer.Default.Equals(methodSymbol.ContainingType, dapperClass) || !methodSymbol.Name.StartsWith(QueryPrefix))
             {
                 return;
             }
@@ -77,7 +79,7 @@ namespace SqlAnalyzer.Net
                 .AncestorsAndSelf()
                 .OfType<MethodDeclarationSyntax>()
                 .FirstOrDefault();
-            if (methodDeclaration == null)
+            if (methodDeclaration == null || multiVariable is null)
             {
                 return;
             }

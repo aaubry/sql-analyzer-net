@@ -21,6 +21,30 @@ namespace SqlAnalyzer.Net.Test
         }
 
         [TestMethod]
+        public void InlineSqlDeclaredVariableWithAssignmentParameters_NotTriggered()
+        {
+            var code = ReadTestData("InlineSqlDeclaredVariableWithAssignmentParameters.cs");
+
+            VerifyCSharpDiagnostic(code);
+        }
+
+        [TestMethod]
+        public void InlineInlineSqlParametersInTemplateStringConditionals_NotTriggered()
+        {
+            var code = ReadTestData("InlineSqlParametersInTemplateStringConditionals.cs");
+
+            VerifyCSharpDiagnostic(code);
+        }
+
+        [TestMethod]
+        public void InlineInlineSqlParametersInTemplateStringWithComments_NotTriggered()
+        {
+            var code = ReadTestData("InlineSqlParametersInTemplateStringWithComments.cs");
+
+            VerifyCSharpDiagnostic(code);
+        }
+
+        [TestMethod]
         public void InlineSqlUnmatchedParameters_AnalyzerTriggered()
         {
             var code = ReadTestData("InlineSqlUnmatchedParameters.cs");
@@ -34,6 +58,42 @@ namespace SqlAnalyzer.Net.Test
                                    Severity = DiagnosticSeverity.Warning,
                                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 13, 13) }
                                };
+
+            VerifyCSharpDiagnostic(code, expected);
+        }
+
+        [TestMethod]
+        public void InlineSqlUnmatchedParametersInCommandDefinition_AnalyzerTriggered()
+        {
+            var code = ReadTestData("InlineSqlUnmatchedParametersInCommandDefinition.cs");
+
+            var expected = new DiagnosticResult
+            {
+                Id = ParametersMatchingRule.DiagnosticId,
+                Message = string.Format(
+                                       ParametersMatchingRule.MessageFormatCsharpArgumentNotFound,
+                                       "not_found"),
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 13, 25) }
+            };
+
+            VerifyCSharpDiagnostic(code, expected);
+        }
+
+        [TestMethod]
+        public void InlineSqlUnmatchedParametersInTemplateString_AnalyzerTriggered()
+        {
+            var code = ReadTestData("InlineSqlUnmatchedParametersInTemplateString.cs");
+
+            var expected = new DiagnosticResult
+            {
+                Id = ParametersMatchingRule.DiagnosticId,
+                Message = string.Format(
+                                       ParametersMatchingRule.MessageFormatCsharpArgumentNotFound,
+                                       "not_found"),
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 14, 25) }
+            };
 
             VerifyCSharpDiagnostic(code, expected);
         }

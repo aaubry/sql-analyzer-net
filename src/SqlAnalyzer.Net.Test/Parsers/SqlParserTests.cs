@@ -38,7 +38,7 @@ namespace SqlAnalyzer.Net.Test.Parsers
         {
             var sql = "select * from User where UserTypeId = {=Admin}";
 
-            var literals = SqlParser.FindDapperLiterals(sql);
+            var literals = SqlParser.FindParameters(sql, Models.Orm.Dapper);
 
             Assert.AreEqual(1, literals.Count);
             Assert.AreEqual("Admin", literals.First());

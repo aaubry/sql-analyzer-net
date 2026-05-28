@@ -21,6 +21,11 @@ namespace SqlAnalyzer.Net.Extensions
             foreach (var argument in invocationExpressionSyntax.ArgumentList.Arguments)
             {
                 var parameter = argument.DetermineParameter(semanticModel);
+                if (parameter is null)
+                {
+                    continue;
+                }
+
                 if (!string.Equals(parameter.Name, "commandType"))
                 {
                     continue;
@@ -43,6 +48,21 @@ namespace SqlAnalyzer.Net.Extensions
             return true;
         }
 
+        public static bool IsDapperCommandDefinitionInstantiation(this ObjectCreationExpressionSyntax objectCreationExpressionSyntax, SemanticModel semanticModel)
+        {
+            var typeSymbol = semanticModel.GetSymbolInfo(objectCreationExpressionSyntax).Symbol as IMethodSymbol;
+            if (typeSymbol == null)
+            {
+                return false;
+            }
+            var commandDefinitionType = semanticModel.Compilation.GetTypeByMetadataName("Dapper.CommandDefinition");
+            if (SymbolEqualityComparer.Default.Equals(typeSymbol.ContainingType, commandDefinitionType))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public static bool IsSqlCommandExecuteMethod(this InvocationExpressionSyntax invocationExpressionSyntax, SemanticModel semanticModel)
         {
             var methodSymbol = semanticModel.GetSymbolInfo(invocationExpressionSyntax).Symbol as IMethodSymbol;
@@ -52,7 +72,7 @@ namespace SqlAnalyzer.Net.Extensions
             }
 
             var sqlCommand = semanticModel.Compilation.GetTypeByMetadataName("System.Data.SqlClient.SqlCommand");
-            if (methodSymbol.ContainingType == sqlCommand && (methodSymbol.Name.StartsWith("Execute") || methodSymbol.Name.StartsWith("BeginExecute")))
+            if (SymbolEqualityComparer.Default.Equals(methodSymbol.ContainingType, sqlCommand) && (methodSymbol.Name.StartsWith("Execute") || methodSymbol.Name.StartsWith("BeginExecute")))
             {
                 return true;
             }
@@ -76,7 +96,7 @@ namespace SqlAnalyzer.Net.Extensions
             var type = semanticModel.Compilation.GetTypeByMetadataName("System.Data.Entity.DbContext");
             while (type != null)
             {
-                if (methodSymbol.ContainingType == type)
+                if (SymbolEqualityComparer.Default.Equals(methodSymbol.ContainingType, type))
                 {
                     return true;
                 }

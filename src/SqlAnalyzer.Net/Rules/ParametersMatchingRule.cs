@@ -41,8 +41,8 @@ namespace SqlAnalyzer.Net.Rules
         private const string Title = "SQL parameters mismatch";
 
         public static void TryReportDiagnostics(
-            string sqlText,
-            ICollection<string> sharpParameters,
+            string? sqlText,
+            ICollection<string>? sharpParameters,
             Location location,
             SyntaxNodeAnalysisContext context,
             Orm orm)
@@ -58,11 +58,7 @@ namespace SqlAnalyzer.Net.Rules
             }
 
             const char SqlVariableDeclarationSymbol = '@';
-            var sqlVariables = SqlParser.FindParameters(sqlText).ToList();
-            if (orm == Orm.Dapper)
-            {
-                sqlVariables.AddRange(SqlParser.FindDapperLiterals(sqlText));
-            }
+            var sqlVariables = SqlParser.FindParameters(sqlText!, orm).ToList();
 
             sharpParameters = sharpParameters.Select(p => p.Trim(SqlVariableDeclarationSymbol)).ToList();
 
