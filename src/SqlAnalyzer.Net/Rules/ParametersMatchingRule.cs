@@ -52,15 +52,9 @@ namespace SqlAnalyzer.Net.Rules
                 return;
             }
 
-            if (sharpParameters == null)
-            {
-                return;
-            }
+            sharpParameters ??= [];
 
-            const char SqlVariableDeclarationSymbol = '@';
             var sqlVariables = SqlParser.FindParameters(sqlText!, orm).ToList();
-
-            sharpParameters = sharpParameters.Select(p => p.Trim(SqlVariableDeclarationSymbol)).ToList();
 
             foreach (var notFoundArgument in sqlVariables.Except(
                 sharpParameters,

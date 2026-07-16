@@ -63,6 +63,24 @@ namespace SqlAnalyzer.Net.Test
         }
 
         [TestMethod]
+        public void InlineSqlMissingParameters_AnalyzerTriggered()
+        {
+            var code = ReadTestData("InlineSqlMissingParameters.cs");
+
+            var expected = new DiagnosticResult
+            {
+                Id = ParametersMatchingRule.DiagnosticId,
+                Message = string.Format(
+                                       ParametersMatchingRule.MessageFormatCsharpArgumentNotFound,
+                                       "not_found"),
+                Severity = DiagnosticSeverity.Warning,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 13, 13) }
+            };
+
+            VerifyCSharpDiagnostic(code, expected);
+        }
+
+        [TestMethod]
         public void InlineSqlUnmatchedParametersInCommandDefinition_AnalyzerTriggered()
         {
             var code = ReadTestData("InlineSqlUnmatchedParametersInCommandDefinition.cs");

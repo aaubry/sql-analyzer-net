@@ -65,7 +65,7 @@ namespace SqlAnalyzer.Net.Walkers
                 && node.ArgumentList?.Arguments.Count == 1
                 && node.ArgumentList.Arguments.Single().Expression is LiteralExpressionSyntax literalExpression)
             {
-                SqlParameters.Add(literalExpression.Token.ValueText);
+                SqlParameters.Add(literalExpression.Token.ValueText.TrimStart('@'));
             }
 
             base.VisitElementAccessExpression(node);
@@ -106,7 +106,7 @@ namespace SqlAnalyzer.Net.Walkers
                 return;
             }
 
-            SqlParameters.Add(literalExpression.Token.ValueText);
+            SqlParameters.Add(literalExpression.Token.ValueText.TrimStart('@'));
         }
 
         public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
