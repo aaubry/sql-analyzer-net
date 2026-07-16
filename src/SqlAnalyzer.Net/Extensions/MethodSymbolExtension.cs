@@ -6,8 +6,10 @@ namespace SqlAnalyzer.Net.Extensions
     {
         public static bool IsDapperMethod(this IMethodSymbol symbol, SemanticModel semanticModel)
         {
-            var sqlMapper = semanticModel.Compilation.GetTypeByMetadataName("Dapper.SqlMapper");
-            if (SymbolEqualityComparer.Default.Equals(symbol.ContainingType, sqlMapper))
+            var isSqlMapper = symbol.ContainingType.Name == "SqlMapper"
+                && symbol.ContainingType.ContainingNamespace.Name == "Dapper";
+
+            if (isSqlMapper)
             {
                 return true;
             }

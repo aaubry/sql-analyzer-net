@@ -55,12 +55,11 @@ namespace SqlAnalyzer.Net.Extensions
             {
                 return false;
             }
-            var commandDefinitionType = semanticModel.Compilation.GetTypeByMetadataName("Dapper.CommandDefinition");
-            if (SymbolEqualityComparer.Default.Equals(typeSymbol.ContainingType, commandDefinitionType))
-            {
-                return true;
-            }
-            return false;
+
+            var isCommandDefinitionCall = typeSymbol.ContainingType.Name == "CommandDefinition"
+                && typeSymbol.ContainingType.ContainingNamespace.Name == "Dapper";
+
+            return isCommandDefinitionCall;
         }
 
         public static bool IsSqlCommandExecuteMethod(this InvocationExpressionSyntax invocationExpressionSyntax, SemanticModel semanticModel)
