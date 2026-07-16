@@ -21,6 +21,14 @@ namespace SqlAnalyzer.Net.Test
         }
 
         [TestMethod]
+        public void InlineSqlDeclaredObjectParameters_NotTriggered()
+        {
+            var code = ReadTestData("InlineSqlDeclaredObjectParameters.cs");
+
+            VerifyCSharpDiagnostic(code);
+        }
+
+        [TestMethod]
         public void InlineSqlDeclaredVariableWithAssignmentParameters_NotTriggered()
         {
             var code = ReadTestData("InlineSqlDeclaredVariableWithAssignmentParameters.cs");

@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlDeclaredObjectParameters.cs" />
     <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlDeclaredVariableParameters.cs" />
     <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlDeclaredVariableWithAssignmentParameters.cs" />
     <Compile Remove="TestData\DapperParametersMatchingAnalyzer\InlineSqlDynamicParameters.cs" />
@@ -45,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlDeclaredObjectParameters.cs" />
     <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlDeclaredVariableWithAssignmentParameters.cs" />
     <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlLiteralParameters.cs" />
     <EmbeddedResource Include="TestData\DapperParametersMatchingAnalyzer\InlineSqlDynamicParametersWithConstructor.cs" />

@@ -61,6 +61,31 @@ namespace SqlAnalyzer.Net
                 return dapperAddInvocationExpressionWalker.SqlParameters;
             }
 
+            var argumentType = symbol switch
+            {
+                ILocalSymbol local => local.Type,
+                IParameterSymbol parameter => parameter.Type,
+                IFieldSymbol field => field.Type,
+                IPropertySymbol property => property.Type,
+                IMethodSymbol method => method.ReturnType,
+                _ => null
+            };
+
+            if (argumentType != null)
+            {
+                return argumentType
+                    .GetMembers()
+                    .Where(m => !m.IsStatic)
+                    .Select(m => m switch
+                    {
+                        IFieldSymbol field when field.DeclaredAccessibility == Accessibility.Public => field.Name,
+                        IPropertySymbol property when property.DeclaredAccessibility == Accessibility.Public => property.Name,
+                        _ => null!
+                    })
+                    .Where(m => m != null)
+                    .ToList();
+            }
+
             return null;
         }
 
